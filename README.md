@@ -16,7 +16,8 @@ Ce projet consiste à développer une plateforme Intranet pour une société en 
   - Accès à une page de modification des informations personnelles (incluant le login/mot de passe) en cliquant sur l'image de profil dans le header. 
 - 4 Déconnexion:
   - Possibilité de se déconnecter. Après déconnexion, les pages précédentes (home, liste) ne sont plus accessibles. 
-- **Administrateur**
+- **Administrateur :**
+
 L'administrateur dispose de privilèges supplémentaires :
 - 1 Gestion des Collaborateurs:
   - Ajouter un nouveau collaborateur via un formulaire.
@@ -28,11 +29,11 @@ L'administrateur dispose de privilèges supplémentaires :
   - Boutons "Éditer" et "Supprimer" sur les fiches des collaborateurs.
 - **Structure du Répertoire**
 Root/
-├── Index
-├── .gitignore
-├── readme.md
-├── views # Composants de page
-├── model # Base de données
-├── asset # Images, icônes
-├── css # Styles: reset et thème
-└── favicon # Icônes onglets
+├── Index  
+├── .gitignore  
+├── readme.md  
+├── views        # Composants de page  
+├── model        # Base de données  
+├── asset        # Images, icônes  
+├── css          # Styles: reset et thème  
+└── favicon      # Icônes onglets  
