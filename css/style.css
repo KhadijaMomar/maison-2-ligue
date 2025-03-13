@@ -1,0 +1,139 @@
+@import url(reset.css);
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1.5rem ;
+    background-color: var(--main-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+    height: 2rem;
+    color: var(--text-color-white);
+    height: 4.5rem;
+}
+.logo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+.logo img{
+    border-radius: 0.625rem;
+    width: 3rem;
+    height: auto;
+}
+.header span{
+   margin-right: 3rem;
+}
+main{
+    margin-top: 6rem;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    row-gap: 2rem;
+}
+.title{
+    display: flex;
+    align-items: center ;
+    justify-content: center;
+}
+.title h1{
+    color: var(--titre-color);
+    font-size: 3.5rem;
+}
+.bars{
+    width: 70%;
+    background-color: var(--main-color);
+    height: 0.2rem;
+}
+.footer{
+    margin-top: 5rem;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    padding: 2rem;
+    background-color: var(--main-color);
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color-white);
+    height: 4.5rem;
+}
+.carte{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 30rem;
+    background-color: var(--second-bg-color);
+    box-shadow: 0 0 .4rem var(--main-color);
+    padding: 1 2rem;
+    row-gap: 4rem;
+}
+.carte p{
+    width: 60%;
+    font-size: 1.5rem;
+}
+
+.carte .form input[type="text"]{
+    border: solid 0.15rem transparent;
+    border-radius: 2rem;
+    line-height: 3rem;
+    width: 100%;
+    padding-left:2rem ;
+    background-color: var(--second-bg-color);
+    color: black;
+    cursor: pointer;
+    line-height: 3.5rem;
+    margin-bottom: 1rem;
+    transition: box-shadow .6s ease-in-out;
+    border-bottom-color: var(--main-color);
+}
+
+.carte .form input[type="button"]{
+    margin-left: 5rem;
+    border-radius: 2rem;
+    width: 80%;
+    background: linear-gradient(50deg, var(--second-main-color), var(--main-color));
+    cursor: pointer;
+    line-height: 3.5rem;
+    border-bottom-color: var(--main-color);
+    color: var(--text-color-white);
+    text-align: center;
+}
+.carte input[type="text"]:focus{
+    box-shadow: 0 0 1rem var(--main-color);
+    outline: none;
+    border-color: var(--main-color);
+} 
+
+
+/* .form{
+    display: flex;
+    flex-direction: column;
+    font-weight: 500;
+    align-items: center;
+}
+.form input{
+    border: solid 0.15rem transparent;
+    border-radius: 2rem;
+    height: 4rem;
+    width: 80%;
+    padding-left:1rem ;
+    background-color: #e4e0e0;
+    color: black;
+    cursor: pointer;
+    line-height: 3.5rem;
+    margin-bottom: 1rem;
+    transition: all .6s ease-in-out;
+    border-bottom-color: black;
+}
+.form input[type="text"]:focus{
+        box-shadow: 0 0 1rem #1998f2;
+        outline: none;
+} */

@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Slab:wght@100..900&display=swap');
+
+html {
+    font-size: 62.5%; /* 1rem = 10px, facilite les calculs (10px/16px = 62.5%) */
+    scroll-behavior: smooth;
+    block-size: border-box;
+}
+:root{
+    --bg-color:#FFFEFC;
+    --second-bg-color:#FDF8F5;
+    --titre-color:#333333;
+    --text-color-black:#000000;
+    --text-color-white:white;
+    --main-color:#6A0572;
+    --second-main-color:#EFA8B8;
+}
+
+h1, h2, h3, h4, h5, h6, p, ol, ul, figure, blockquote, dl, dd {
+    margin: 0;
+    padding: 0;
+}
+*{
+    box-sizing: border-box;
+}
+body {
+    font: 1.6rem "Montserrat", sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    scroll-behavior: smooth;
+    background-color: var(--bg-color);
+    height: 100vh;
+}
+
+
+ol, ul {
+    list-style: none;
+}
+
+img{
+    max-width: 100%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
