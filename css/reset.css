@@ -26,11 +26,12 @@ body {
     font: 1.6rem "Montserrat", sans-serif;
     line-height: 1.6;
     margin: 0;
-    display: grid;
-    grid-template-rows: auto 1fr auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
     scroll-behavior: smooth;
     background-color: var(--bg-color);
-    height: 100vh;
+    min-height: 100vh;
 }
 
 
