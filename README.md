@@ -1,6 +1,6 @@
 # Maison des Ligues  
 
-[Lien vers le site ](https://exemple.com)
+[Lien vers le site ](https://khadijamomar.github.io/maison-2-ligue/)
 
 Ce projet consiste à développer une **plateforme Intranet** pour une société en pleine expansion.  
 L'objectif est de **faciliter et encourager** les relations entre collaborateurs via une interface accessible en interne.  
