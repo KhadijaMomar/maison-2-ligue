@@ -143,10 +143,11 @@ main{
     cursor: pointer;
     line-height: 3.5rem;
     margin-bottom: 1rem;
+    padding: 0 0 0 4rem;
     transition: box-shadow .6s ease-in-out;
     border-bottom-color: var(--main-color);
 }
-.form-search input[type="text"]{
+.form-search input[type="text"],[type="mail"],[type="date"]{
     border: solid 0.15rem transparent;
     border-radius: 2rem;
     line-height: 3rem;
@@ -164,6 +165,21 @@ main{
     outline: none;
     border-color: var(--main-color);
 } 
+.form-search input[type="mail"]:focus{
+    box-shadow: 0 0 1rem var(--main-color);
+    outline: none;
+    border-color: var(--main-color);
+} 
+.form-search input[type="date"]:focus{
+    box-shadow: 0 0 1rem var(--main-color);
+    outline: none;
+    border-color: var(--main-color);
+} 
+
+.form-search div input{
+    width: 100%;
+}
+
 .sec-accueil{
     display: flex;
     flex-direction: column;
@@ -175,7 +191,7 @@ main{
 .sec-clolab{
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 2rem;
     width:  60%;
     justify-content: center;
     align-items: center;
@@ -277,14 +293,13 @@ main{
 }
 .search i {
     position: absolute;
-    right: 4rem;
+    left: 1rem;
     top: 40%;
     transform: translateY(-50%);
     color: var(--main-color);
     font-size: 2rem;
     pointer-events: none; /* Permet de cliquer à travers l'icône */
 }
-
 
 
 /* .form{
