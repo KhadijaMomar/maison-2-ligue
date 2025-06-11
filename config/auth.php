@@ -89,6 +89,35 @@ return [
     | quickly generating a very large amount of password reset tokens.
     |
     */
+    'guards' => [
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
+        'collaborateur' => [
+            'driver' => 'session',
+            'provider' => 'collaborateurs',
+        ],
+        'utilisateur' => [
+            'driver' => 'session',
+            'provider' => 'utilisateurs',
+        ],
+    ],
+
+    'providers' => [
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
+        ],
+        'collaborateurs' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Collaborateur::class,
+        ],
+        'utilisateurs' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Utilisateur::class,
+        ],
+    ],
 
     'passwords' => [
         'users' => [
