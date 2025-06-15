@@ -321,6 +321,50 @@ main{
 }
 
 
+.actions {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: auto; /* Pousse les boutons en bas du conteneur flex */
+    gap: 10px; /* Space between buttons */
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+    padding-top: 1.5rem; /* Ajoute un espace au-dessus des boutons */
+    
+}
+.btn {
+    padding: 0.8rem 1.2rem;
+    border-radius: 0.5rem; /* Slightly rounded corners for buttons */
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    flex-grow: 1; /* Allow buttons to grow and fill space */
+    min-width:10rem; /* Minimum width for buttons */
+    text-align: center;
+    cursor: pointer;
+    
+}
+.btn-edit {
+    background: linear-gradient(90deg, #20c997, #00BFA5); /* Vert-bleu vif */
+    color: white;
+    border: 1px solid #00BFA5;
+}
+
+.btn-edit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(32, 201, 151, 0.4);
+}
+
+.btn-delete {
+    background: linear-gradient(90deg, #CC0000, #990000); /* Rouge foncé */
+    color: white;
+    border: 1px solid #990000;
+}
+
+.btn-delete:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(204, 0, 0, 0.4);
+}
 /* .form{
     display: flex;
     flex-direction: column;

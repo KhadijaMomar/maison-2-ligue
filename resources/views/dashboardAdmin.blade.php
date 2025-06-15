@@ -57,16 +57,16 @@
         </section>
         <section class="bars">
         </section>
-        
-        <p>Avez vous dit bonjour à vos collègues:</p>
-        <section class="sec-accueil">
+
+        <p>Avez vous dit bonjour à vos collègues: vous etes connecté en tant qu'administrateur</p>
+            <section class="sec-accueil">
              @foreach($utilisateurs as $collab)
             <section class="carte-accueil">
                 <div class="img">
                   <img src="{{ asset('storage/img/' . $collab->photo) }}" alt="photo representant une personnalité" class="img-pers">
                 </div>
                 <div class="fonction">
-                        <span>{{ $collab->categorie }} </span>
+                    <span>{{ $collab->categorie }} </span>
                 </div>
                <div class="items">
                     <div class="p">
@@ -88,7 +88,13 @@
                             <span>Anniversaire : {{ $collab->birthdate }}</span>
                         </div>
                     </div>
-                  
+                   <div class="action">
+                    <a href="{{ route('modifier', $collab->id) }}"><button class="btn btn-edit">Modifier</button></a>
+                    <form action="{{ route('destroy', $collab->id) }}" method="POST" style="display: inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button  type="submit" class="btn btn-delete"  onclick="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?')">Supprimer</button>
+                    </div>
                </div>
             </section>
              @endforeach

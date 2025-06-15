@@ -10,12 +10,16 @@ use App\Http\Middleware\AuthUtilisateur;
 Route::controller(LoginController::class)->group(function () {
     Route::get('/login', 'showLogin')->name('login');
     Route::post('/login', 'handleLogin');
-    Route::get('/utilisateur/dashboard', 'dashboard');
+    Route::get('/utilisateur/dashboard', 'dashboard')->name('dashboard');
+    Route::get('/utilisateur/dashboardAdmin', 'dashboardAdmin')->name('dashboardAdmin'); 
     Route::post('/logout','logout')->name('logout');
-    
+    Route::get('/utilisateur/modifier/{id}', 'modifier')->name('modifier');
+    Route::put('/utilisateur/{id}', 'update')->name('update');
+    Route::delete('/utilisateur/{id}', 'destroy')->name('destroy');
+    // Route::get('/utilisateur/dashboardAdmin','index')->name('index');
 });
 
-//Route::get('/', [connexionController::class, 'index']); 
+
 
 Route::get('/connexion', function () {
     return view('login', [
