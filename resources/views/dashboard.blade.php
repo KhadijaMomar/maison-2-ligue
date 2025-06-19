@@ -57,7 +57,18 @@
         </section>
         <section class="bars">
         </section>
-        
+        <section class="form-search">
+            <form action="" class="search">
+                <i class='bx bx-search'></i>
+                <input type="text" placeholder="Recherche...">
+            </form>
+            <form action="" >
+                <label for="nom">Recherche par :</label>
+                <input type="text" placeholder="nom">
+                <label for="categorie">Categorie :</label>
+                <input type="text" placeholder="- aucun -">
+            </form>
+        </section>
         <p>Avez vous dit bonjour à vos collègues:</p>
         <section class="sec-accueil">
              @foreach($utilisateurs as $collab)

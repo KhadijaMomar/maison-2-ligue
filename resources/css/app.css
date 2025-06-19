@@ -204,6 +204,15 @@ main{
     justify-content: center;
     align-items: center;
 }
+.sec-accueil-bien{
+    display: flex;
+    flex-direction: column;
+    column-gap: 2rem;
+    row-gap: 1rem;
+    width:  60%;
+    justify-content: center;
+    align-items: center;
+}
 .sec-clolab{
     display: flex;
     flex-wrap: wrap;

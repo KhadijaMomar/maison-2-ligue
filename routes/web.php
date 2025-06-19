@@ -10,6 +10,7 @@ use App\Http\Middleware\AuthUtilisateur;
 Route::controller(LoginController::class)->group(function () {
     Route::get('/login', 'showLogin')->name('login');
     Route::post('/login', 'handleLogin');
+    Route::get('/utilisateur/accueil', 'accueil')->name('accueil');
     Route::get('/utilisateur/dashboard', 'dashboard')->name('dashboard');
     Route::get('/utilisateur/dashboardAdmin', 'dashboardAdmin')->name('dashboardAdmin'); 
     Route::post('/logout','logout')->name('logout');

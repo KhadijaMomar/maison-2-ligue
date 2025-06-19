@@ -29,24 +29,28 @@ class LoginController extends Controller
             ]);
         
               // Tentative de connexion Admin
-        if (Auth::guard('utilisateur')->attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
-            $user = Auth::guard('utilisateur')->user();
-            // Session::put('admin', $admin);
-             // Vérifie la colonne 'est_admin'
-            if ($user->est_admin == 1) {
-                // Redirige vers le tableau de bord administrateur en utilisant le chemin complet de la route
-                return redirect()->intended('/utilisateur/dashboardAdmin');
-            } else {
-                // Redirige vers le tableau de bord collaborateur en utilisant le chemin complet de la route
-                return redirect()->intended('/utilisateur/dashboard');
-            }
-           
+          if (Auth::guard('utilisateur')->attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
+            // Redirige TOUS les utilisateurs, qu'ils soient admin ou non, vers la page d'accueil.
+            return redirect()->intended(route('accueil')); 
         }
 
         return back()->withErrors([
             'email' => 'Identifiants incorrects ou compte inexistant',
         ])->withInput($request->only('email'));
     }
+     public function accueil()
+    {
+        // Vérifie si l'utilisateur est connecté via le guard 'utilisateur'
+        if (!Auth::guard('utilisateur')->check()) {
+            return redirect('/login')->withErrors(['error' => 'Veuillez vous connecter.']);
+        }
+        
+      
+        return view('accueil', ['titre' => 'Bienvenue sur l\'intranet']);
+    
+    }
+
+
     # Page après connexion
     public function dashboard()
     {
@@ -85,7 +89,32 @@ class LoginController extends Controller
   public function update(Request $request, $id)
   {
       $utilisateur = Utilisateur::findOrFail($id);
-     // dd($utilisateur);
+     $data = $request->except('password');
+
+if ($request->filled('password')) {
+    $data['password'] = bcrypt($request->password);
+}
+    // Vérification et traitement de la photo
+    $request->validate([
+        'surname'    => 'nullable|string|max:255',
+        'name' => 'nullable|string|max:255',
+        'email'  => 'nullable|email',
+        'city'  => 'nullable|string|max:255',
+        'country'   => 'nullable|string|max:255',
+        'birthdate'   => 'nullable|date',
+        'phone' => 'nullable|string|max:15',
+        'photo'      => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'est_admin' => 'nullable|boolean',
+        'password' => 'nullable|string|min:6|confirmed',
+    ]);
+ if ($request->hasFile('photo')) {
+        $file = $request->file('photo');
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('storage/img'), $filename);
+        $data['photo'] = $filename;
+    }
+
+    $utilisateur->update($data);
       $request->validate([
           'surname'    => 'nullable|string|max:255',
           'name' => 'nullable|string|max:255',
@@ -94,7 +123,7 @@ class LoginController extends Controller
           'country'   => 'nullable|string|max:255',
           'birthdate'   => 'nullable|date',
           'phone' => 'nullable|string|max:15',
-          'photo' => 'nullable|string',
+          'photo'      => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
           'est_admin' => 'nullable|boolean',
           'password' => 'nullable|string|min:6|confirmed',
          

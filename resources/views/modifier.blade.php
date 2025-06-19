@@ -111,8 +111,8 @@
                     <input type="text" name="country" value="{{ $utilisateur->country }}" placeholder="France">
                 </div>
                 <div>
-                    <label for="url">*Url de la photo: </label>
-                    <input type="text" name="photo" value="{{ $utilisateur->photo }}" placeholder="https://randomuser.me/api.com">
+                    <label for="photo">*Url de la photo: </label>
+                    <input type="file" name="photo" id="photo" value="{{ $utilisateur->photo }}">
                 </div>
                 <button type="submit" class="button">Modifier le collaborateur</button>
             </form>

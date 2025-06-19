@@ -57,13 +57,25 @@
         </section>
         <section class="bars">
         </section>
-
-        <p>Avez vous dit bonjour à vos collègues: vous etes connecté en tant qu'administrateur</p>
+        <section class="form-search">
+            <form action="" class="search">
+                <i class='bx bx-search'></i>
+                <input type="text" placeholder="Recherche...">
+            </form>
+            <form action="" >
+                <label for="nom">Recherche par :</label>
+                <input type="text" placeholder="nom">
+                <label for="categorie">Categorie :</label>
+                <input type="text" placeholder="- aucun -">
+            </form>
+        </section>
+       {{-- <p>Avez vous dit bonjour à vos collègues: vous etes connecté en tant qu'administrateur</p> --}}
             <section class="sec-accueil">
              @foreach($utilisateurs as $collab)
             <section class="carte-accueil">
                 <div class="img">
-                  <img src="{{ asset('storage/img/' . $collab->photo) }}" alt="photo representant une personnalité" class="img-pers">
+                    <img src="{{ asset('storage/img/' . ($collab->photo ?? 'default.jpg')) }}" alt="Photo de {{ $collab->nom }}" class="img-pers">
+                  <!--<img src="{{ asset('storage/img/' . $collab->photo) }}" alt="photo representant une personnalité" class="img-pers">-->
                 </div>
                 <div class="fonction">
                     <span>{{ $collab->categorie }} </span>
@@ -94,6 +106,7 @@
                         @csrf
                         @method('DELETE')
                         <button  type="submit" class="btn btn-delete"  onclick="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?')">Supprimer</button>
+                    </form>
                     </div>
                </div>
             </section>
