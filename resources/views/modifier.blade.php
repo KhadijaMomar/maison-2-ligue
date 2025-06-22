@@ -31,25 +31,46 @@
  </head>
 </head>
 <body>
-    <header class="header">
-        <div class="logo">
-            <img src="{{ asset('storage/img/intranet.png') }}" alt="">
-            <span>intranet</span>
-        </div>
-        <div class="logo2" id="logout-trigger" style="cursor: pointer; display: flex; align-items: center; gap: 5px;">
-            
-            <i class='bx bx-menu'></i>
-            <a href="listCollab.html">
-                <span>Liste</span>
-            </a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                @csrf
-            </form>
-            <div><img src="{{ asset('storage/img/personne6.avif') }}" alt="photo representant une personnalité" ></div>
-            <i class='bx bx-power-off'></i>
-            <span>Deconnexion</span>
-        </div>
-    </header>
+     <header class="header">
+                        <div class="logo">
+                            <img src="{{ asset('storage/img/intranet.png') }}" alt="">
+                            <span>intranet</span>
+                        </div>
+                        <div class="logo2" id="logout-trigger" style="cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                             @if(Auth::guard('utilisateur')->check() && Auth::guard('utilisateur')->user()->est_admin == 1)
+                                {{-- Si l'utilisateur est connecté ET est un administrateur --}}
+                                <i class='bx bx-menu'></i> 
+                                <a href="{{ route('dashboardAdmin') }}">
+                                    <span>Liste</span>
+                                </a>
+                            @else
+                                {{-- Si l'utilisateur est connecté ET n'est PAS un administrateur (ou si Auth::check() est faux, mais le middleware gérera déjà ça) --}}
+                                
+                                <i class='bx bx-menu'></i> 
+                                <a href="{{ route('dashboard') }}">
+                                    <span>Liste</span>
+                                </a>
+                            @endif
+                           
+                            @if(Auth::guard('utilisateur')->check())
+
+                            <img src="{{ asset('storage/img/' . Auth::guard('utilisateur')->user()->photo) }}" alt="Photo de profil">
+                             <span>{{ Auth::guard('utilisateur')->user()->name }}</span>
+                            @else
+                            <span>Non connecté</span>
+                            @endif
+                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                            <i class='bx bx-power-off'></i>
+                            <span>Deconnexion</span>
+                            {{-- <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                            <i class='bx bx-power-off'></i>
+                            <span>Deconnexion</span> --}}
+                        </div>
+                    </header>
     <main>
         <section class="title">
              <h1>Modifier un membre</h1>
@@ -66,7 +87,7 @@
         </div>
     @endif
       <section class="form-search">
-            <form action="{{ route('update', $utilisateur->id) }}" method="POST">
+            <form action="{{ route('update', $utilisateur->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -110,9 +131,12 @@
                     <label for="pays">*Pays: </label>
                     <input type="text" name="country" value="{{ $utilisateur->country }}" placeholder="France">
                 </div>
-                <div>
+               <div>
                     <label for="photo">*Url de la photo: </label>
-                    <input type="file" name="photo" id="photo" value="{{ $utilisateur->photo }}">
+                    <input type="file" name="photo" id="photo"  accept="image/*" >
+                    @if($utilisateur->photo)
+                        <p>Photo actuelle: <img src="{{ asset('storage/img/' . $utilisateur->photo) }}" alt="Photo actuelle" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;"></p>
+                    @endif
                 </div>
                 <button type="submit" class="button">Modifier le collaborateur</button>
             </form>

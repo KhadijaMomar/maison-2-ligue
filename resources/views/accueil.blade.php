@@ -1,16 +1,16 @@
  <!DOCTYPE html> 
             <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-                <head>
-                    <meta charset="utf-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1">
-            
-                    <title>Accueil</title>
-                    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-                    <!-- Fonts -->
-                    <link rel="preconnect" href="https://fonts.bunny.net">
-                    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
-                    <link rel="stylesheet" href="{{ Vite::asset('resources/css/app.css') }}">
-                </head>
+             <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+     <!-- Fonts -->
+     <link rel="preconnect" href="https://fonts.bunny.net">
+     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+     <link rel="stylesheet" href="{{ Vite::asset('resources/css/app.css') }}">
+ </head>
+</head>
                 <body>
                    <header class="header">
                         <div class="logo">
@@ -32,16 +32,24 @@
                                     <span>Liste</span>
                                 </a>
                             @endif
-                            {{-- <i class='bx bx-menu'></i>
-                            <a href="listCollab.html">
-                                <span>Liste</span>
-                            </a> --}}
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                           
+                            @if(Auth::guard('utilisateur')->check())
+
+                            <img src="{{ asset('storage/img/' . Auth::guard('utilisateur')->user()->photo) }}" alt="Photo de profil">
+                             <span>{{ Auth::guard('utilisateur')->user()->name }}</span>
+                            @else
+                            <span>Non connecté</span>
+                            @endif
+                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                 @csrf
                             </form>
-                            <div><img src="{{ asset('storage/img/personne6.avif') }}" alt="photo representant une personnalité" ></div>
                             <i class='bx bx-power-off'></i>
                             <span>Deconnexion</span>
+                            {{-- <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                            <i class='bx bx-power-off'></i>
+                            <span>Deconnexion</span> --}}
                         </div>
                     </header>
                     <main>
@@ -53,39 +61,44 @@
                         <section class="bars">
                         </section>
                         <section class="sec-accueil-bien">
-            <p>Avez vous dit bonjour a :</p>
-            <section class="carte-accueil">
-                <div class="img">
-                  <img src="{{ asset('storage/img/personne1.jpg') }}" alt="" class="img-pers">
-                </div>
-               <div class="items">
-                    <div class="p">
-                        <p>Quentin Roger (36 ans)</p>
-                        <p>Saint pierre, France</p>
-                    </div>
-                    
-                    <div class="social-icons">
-                        <div>
-                            <a href=""><i class='bx bxs-envelope'></i></a>
-                            <span>quentin.roger@example.com</span>
+                        <p>Avez vous dit bonjour a :</p>
+                        <section class="carte-accueil">
+                            <div class="img">
+                            <img src="{{ asset('storage/img/personne1.jpg') }}" alt="" class="img-pers">
+                            </div>
+                        <div class="items">
+                                <div class="p">
+                                    <p>Quentin Roger (36 ans)</p>
+                                    <p>Saint pierre, France</p>
+                                </div>
+                                
+                                <div class="social-icons">
+                                    <div>
+                                        <a href=""><i class='bx bxs-envelope'></i></a>
+                                        <span>quentin.roger@example.com</span>
+                                    </div>
+                                    <div>
+                                        <a href=""><i class='bx bxs-phone-call'></i></a>
+                                        <span>04-78-23-87-90</span>
+                                    </div>
+                                    <div>
+                                        <a href=""><i class='bx bxs-cake'></i></a>
+                                        <span>Anniversaire : 11 Décembre</span>
+                                    </div>
+                                </div>
                         </div>
-                        <div>
-                            <a href=""><i class='bx bxs-phone-call'></i></a>
-                            <span>04-78-23-87-90</span>
-                        </div>
-                        <div>
-                            <a href=""><i class='bx bxs-cake'></i></a>
-                            <span>Anniversaire : 11 Décembre</span>
-                        </div>
-                    </div>
-               </div>
-            </section>
-            <button class="button">Dire bonjour</button>
-            <button class="button">Dire bonjour a quelqu’un d’autre</button>
+                        </section>
+                        <button class="button">Dire bonjour</button>
+                        <button class="button">Dire bonjour a quelqu’un d’autre</button>
         </section>
                     </main>
                     <footer class="footer">
                         <p>© - khadidiatou - 2025</p>
                     </footer>
+                   <script>
+        document.getElementById('logout-trigger').addEventListener('click', function() {
+            document.getElementById('logout-form').submit();
+        });
+    </script>
 </body>
 </html>
