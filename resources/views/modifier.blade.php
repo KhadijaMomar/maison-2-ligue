@@ -50,6 +50,11 @@
                                 <a href="{{ route('dashboard') }}">
                                     <span>Liste</span>
                                 </a>
+                                 <i class='bx bx-user-plus'></i>
+                                {{-- Nouveau lien pour ajouter un utilisateur --}}
+                                <a href="{{ route('creerUtilisateur') }}">
+                                    <span>Ajouter un utilisateur</span>
+                                </a>
                             @endif
                            
                             @if(Auth::guard('utilisateur')->check())

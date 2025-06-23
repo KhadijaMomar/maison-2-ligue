@@ -8,7 +8,7 @@ class utilisateur extends Authenticatable
 {
     protected $table = 'utilisateur';
     protected $fillable = ['surname', 'name', 'email', 'phone',
-     'birthdate', 'fonction', 'city', 'country', 'photo',
+     'birthdate', 'fonction', 'city', 'country', 'photo', 'civilite', 'categorie','est_admin',
      'password'];
      
 }

@@ -43,6 +43,11 @@
                                 <a href="{{ route('dashboardAdmin') }}">
                                     <span>Liste</span>
                                 </a>
+                                 <i class='bx bx-user-plus'></i>
+                                {{-- Nouveau lien pour ajouter un utilisateur --}}
+                                <a href="{{ route('creerUtilisateur') }}">
+                                    <span>Ajouter un utilisateur</span>
+                                </a>
                             @else
                                 {{-- Si l'utilisateur est connecté ET n'est PAS un administrateur (ou si Auth::check() est faux, mais le middleware gérera déjà ça) --}}
                                 

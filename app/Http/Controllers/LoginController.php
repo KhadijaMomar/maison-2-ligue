@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\Rule;
 
 class LoginController extends Controller
 {
@@ -18,7 +19,10 @@ class LoginController extends Controller
     {
         return view('auth.login', ['titre' => 'Connexion']);
     }
-
+     public function creer()
+    {
+        return view('creer'); // Retourne la vue 'creer'
+    }
 
     public function handleLogin(Request $request)
     {
@@ -115,38 +119,70 @@ class LoginController extends Controller
     }
 
     // Met à jour le collaborateur en base de données
-    public function update(Request $request, $id)
+   public function update(Request $request, $id)
     {
         $utilisateur = Utilisateur::findOrFail($id);
-        $data = $request->except('password');
 
-        if ($request->filled('password')) {
-            $data['password'] = bcrypt($request->password);
-        }
-        // Vérification et traitement de la photo
-        $request->validate([
-            'surname'    => 'nullable|string|max:255',
-            'name' => 'nullable|string|max:255',
-            'email'  => 'nullable|email',
-            'city'  => 'nullable|string|max:255',
-            'country'   => 'nullable|string|max:255',
-            'birthdate'   => 'nullable|date',
+        $rules = [
+            'surname' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'email' => [
+                'required',
+                'email',
+                // L'email doit être unique SAUF pour l'utilisateur actuel
+                Rule::unique('utilisateur', 'email')->ignore($utilisateur->id),
+            ],
+            'city' => 'nullable|string|max:255',
+            'country' => 'nullable|string|max:255',
+            'birthdate' => 'nullable|date',
             'phone' => 'nullable|string|max:15',
-            'photo'      => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,avif|max:1048576',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:32768',
             'est_admin' => 'nullable|boolean',
-            'password' => 'nullable|string|min:6|confirmed',
-        ]);
-        // Gestion de l'upload de la photo
+            'civilite' => 'nullable|string|max:255',
+            'categorie' => 'nullable|string|max:255',
+            'est_admin' => 'nullable|boolean',
+        ];
+
+        // Rendre les champs de mot de passe conditionnellement requis
+        // S'ils sont fournis, ils doivent être au moins de 6 caractères et confirmés
+        if ($request->filled('password') || $request->filled('password_confirmation')) {
+            $rules['password'] = 'required|string|min:6|confirmed';
+        } else {
+            // Si aucun mot de passe n'est fourni, assurez-vous qu'ils ne soient pas validés comme "required"
+            $rules['password'] = 'nullable|string|min:6|confirmed';
+        }
+
+
+        $data = $request->validate($rules);
+
+        // Gérer l'upload de la photo
         if ($request->hasFile('photo')) {
+            // Supprimer l'ancienne photo si elle existe
+            if ($utilisateur->photo && file_exists(public_path('storage/img/' . $utilisateur->photo))) {
+                unlink(public_path('storage/img/' . $utilisateur->photo));
+            }
             $file = $request->file('photo');
             $filename = time() . '_' . $file->getClientOriginalName();
-            // Le chemin de sauvegarde est public_path('storage/img')
-            // Assurez-vous que le dossier 'storage/img' existe et est accessible en écriture
             $file->move(public_path('storage/img'), $filename);
-            $data['photo'] = $filename; // Enregistre le nom du fichier dans le tableau de données
+            $data['photo'] = $filename;
         } else {
-            unset($data['photo']); // Si aucune nouvelle photo n'est uploadée, ne pas essayer de mettre à jour le champ photo
+            // Si aucune nouvelle photo n'est uploadée, garder l'ancienne
+            // Et ne pas unset la clé, si vous voulez conserver la valeur existante
+            // C'est déjà géré par la validation si photo est nullable
         }
+
+        // Si un nouveau mot de passe est fourni, le hasher
+        if (!empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            // Si le mot de passe est vide, retirez-le des données à mettre à jour pour ne pas écraser l'existant
+            unset($data['password']);
+        }
+
+        
+        // Si la checkbox n'est pas cochée, elle ne sera pas présente dans $request->all().
+        // Donc, on la définit explicitement à false si elle n'est pas présente.
+        $data['est_admin'] = $request->has('est_admin');
 
         $utilisateur->update($data);
 
@@ -154,9 +190,13 @@ class LoginController extends Controller
             ->with('success', 'Collaborateur mis à jour avec succès.');
     }
 
-    public function destroy($id)
+     public function destroy($id)
     {
         $collab = Utilisateur::findOrFail($id);
+        // Supprimer la photo associée si elle existe
+        if ($collab->photo && file_exists(public_path('storage/img/' . $collab->photo))) {
+            unlink(public_path('storage/img/' . $collab->photo));
+        }
         $collab->delete();
         return redirect()->route('dashboardAdmin')->with('success', 'Utilisateur supprimé avec succès !');
     }
@@ -168,5 +208,44 @@ class LoginController extends Controller
             'success' => true,
             'message' => 'Vous avez dit bonjour à ' . $collaborateur->name . ' ' . $collaborateur->surname . ' !'
         ]);
+    }
+    
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'surname' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:utilisateur,email', // L'email doit être unique pour la création
+            'password' => 'required|string|min:6|confirmed', // Mot de passe obligatoire à la création
+            'city' => 'nullable|string|max:255',
+            'country' => 'nullable|string|max:255',
+            'birthdate' => 'nullable|date',
+            'phone' => 'nullable|string|max:15',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:32768',
+            'est_admin' => 'nullable|boolean', // Gérer le statut d'admin
+            'civilite' => 'nullable|string|max:255',
+            'categorie' => 'nullable|string|max:255',
+             'est_admin' => 'nullable|boolean',
+        ]);
+
+        // Hachage du mot de passe
+        $data['password'] = Hash::make($data['password']);
+        $data['est_admin'] = $request->has('est_admin'); 
+        // Gérer l'upload de la photo
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('storage/img'), $filename);
+            $data['photo'] = $filename;
+        } else {
+            $data['photo'] = null; // Aucune photo uploadée
+        }
+
+        // Assurez-vous que 'est_admin' est défini à true si la checkbox est cochée, sinon false
+        $data['est_admin'] = $request->has('est_admin');
+
+        Utilisateur::create($data);
+
+        return redirect()->route('dashboardAdmin')->with('success', 'Utilisateur ajouté avec succès !');
     }
 }

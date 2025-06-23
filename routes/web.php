@@ -17,6 +17,8 @@ Route::controller(LoginController::class)->group(function () {
     Route::get('/utilisateur/modifier/{id}', 'modifier')->name('modifier');
     Route::put('/utilisateur/{id}', 'update')->name('update');
     Route::delete('/utilisateur/{id}', 'destroy')->name('destroy');
+    Route::get('/utilisateur/creer', 'creer')->name('creerUtilisateur'); // Nouvelle route pour la création
+    Route::post('/utilisateur/store', 'store')->name('storeUtilisateur'); // Route pour soumettre le formulaire de création
     // Route::get('/utilisateur/dashboardAdmin','index')->name('index');
 });
 

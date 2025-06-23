@@ -175,6 +175,19 @@ main{
     transition: box-shadow .6s ease-in-out;
     border-bottom-color: var(--main-color);
 }
+.form-search input[type="email"],[type="password"]{
+    border: solid 0.15rem transparent;
+    border-radius: 2rem;
+    line-height: 3rem;
+    padding-left:2rem ;
+    background-color: var(--second-bg-color);
+    color: black;
+    cursor: pointer;
+    line-height: 3.5rem;
+    margin-bottom: 1rem;
+    transition: box-shadow .6s ease-in-out;
+    border-bottom-color: var(--main-color);
+}
 .form-search input[type="text"]:focus{
     box-shadow: 0 0 1rem var(--main-color);
     outline: none;
