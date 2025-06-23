@@ -28,15 +28,15 @@
      <link rel="preconnect" href="https://fonts.bunny.net">
      <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
      <link rel="stylesheet" href="{{ Vite::asset('resources/css/app.css') }}">
+      @livewireStyles
  </head>
-</head>
 <body>
-    <header class="header">
+            <header class="header">
                         <div class="logo">
                             <img src="{{ asset('storage/img/intranet.png') }}" alt="">
                             <span>intranet</span>
                         </div>
-                        <div class="logo2" id="logout-trigger" style="cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                        <div class="logo2"  style="cursor: pointer; display: flex; align-items: center; gap: 5px;">
                              @if(Auth::guard('utilisateur')->check() && Auth::guard('utilisateur')->user()->est_admin == 1)
                                 {{-- Si l'utilisateur est connecté ET est un administrateur --}}
                                 <i class='bx bx-menu'></i> 
@@ -62,13 +62,10 @@
                              <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                 @csrf
                             </form>
-                            <i class='bx bx-power-off'></i>
+                             <i class='bx bx-power-off'></i>
+                            <div id="logout-trigger" class="logout-trigger">
                             <span>Deconnexion</span>
-                            {{-- <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                @csrf
-                            </form>
-                            <i class='bx bx-power-off'></i>
-                            <span>Deconnexion</span> --}}
+                            </div>  
                         </div>
                     </header>
     <main>
@@ -78,61 +75,8 @@
         </section>
         <section class="bars">
         </section>
-        <section class="form-search">
-            <form action="" class="search">
-                <i class='bx bx-search'></i>
-                <input type="text" placeholder="Recherche...">
-            </form>
-            <form action="" >
-                <label for="nom">Recherche par :</label>
-                <input type="text" placeholder="nom">
-                <label for="categorie">Categorie :</label>
-                <input type="text" placeholder="- aucun -">
-            </form>
-        </section>
-       {{-- <p>Avez vous dit bonjour à vos collègues: vous etes connecté en tant qu'administrateur</p> --}}
-            <section class="sec-accueil">
-             @foreach($utilisateurs as $collab)
-            <section class="carte-accueil">
-                <div class="img">
-                    <img src="{{ asset('storage/img/' . ($collab->photo ?? 'default.jpg')) }}" alt="Photo de {{ $collab->nom }}" class="img-pers">
-                  <!--<img src="{{ asset('storage/img/' . $collab->photo) }}" alt="photo representant une personnalité" class="img-pers">-->
-                </div>
-                <div class="fonction">
-                    <span>{{ $collab->categorie }} </span>
-                </div>
-               <div class="items">
-                    <div class="p">
-                        <p>{{ $collab->name }} {{ $collab->surname }} </p>
-                        <p>{{ $collab->city }}, {{ $collab->country }}</p>
-                    </div>
-                    
-                    <div class="social-icons">
-                        <div>
-                            <a href=""><i class='bx bxs-envelope'></i></a>
-                            <span>{{ $collab->email }}</span>
-                        </div>
-                        <div>
-                            <a href=""><i class='bx bxs-phone-call'></i></a>
-                            <span>{{ $collab->phone }}</span>
-                        </div>
-                        <div>
-                            <a href=""><i class='bx bxs-cake'></i></a>
-                            <span>Anniversaire : {{ $collab->birthdate }}</span>
-                        </div>
-                    </div>
-                   <div class="action">
-                    <a href="{{ route('modifier', $collab->id) }}"><button class="btn btn-edit">Modifier</button></a>
-                    <form action="{{ route('destroy', $collab->id) }}" method="POST" style="display: inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button  type="submit" class="btn btn-delete"  onclick="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?')">Supprimer</button>
-                    </form>
-                    </div>
-               </div>
-            </section>
-             @endforeach
-        </section>
+         @livewire('search-utilisateurs', ['isAdminView' => true])
+       
         <button class="button">Dire bonjour a quelqu’un d’autre</button>
     </main>
     <footer class="footer">
@@ -143,5 +87,8 @@
             document.getElementById('logout-form').submit();
         });
     </script>
+    
+     @livewireScripts
+
 </body>
 </html>

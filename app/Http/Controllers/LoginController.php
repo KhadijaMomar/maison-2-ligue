@@ -86,7 +86,7 @@ class LoginController extends Controller
         $utilisateurs = Utilisateur::all();
         return view('dashboardAdmin', compact('utilisateurs'));
     }
-
+    
     
     /**
      * Gère la déconnexion de l'utilisateur.
