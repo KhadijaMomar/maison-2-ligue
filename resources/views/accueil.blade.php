@@ -57,42 +57,52 @@
                     </header>
                     <main>
                         <section class="title">
-                            <h1>{{$titre}}</h1>
-                            <!--<h1>Bienvenue sur l'intranet</h1>-->
-                            <p>La plate-forme de l’entreprise qui vous permet de retouver tous vos collaborateurs</p>
+                              <h1>Bienvenue sur l'intranet 🚀</h1>
+                                <p>La plate-forme de l’entreprise qui vous permet de retrouver tous vos collaborateurs</p>
                         </section>
                         <section class="bars">
                         </section>
                         <section class="sec-accueil-bien">
                         <p>Avez vous dit bonjour a :</p>
                         <section class="carte-accueil">
-                            <div class="img">
-                            <img src="{{ asset('storage/img/personne1.jpg') }}" alt="" class="img-pers">
-                            </div>
-                        <div class="items">
-                                <div class="p">
-                                    <p>Quentin Roger (36 ans)</p>
-                                    <p>Saint pierre, France</p>
-                                </div>
-                                
-                                <div class="social-icons">
-                                    <div>
-                                        <a href=""><i class='bx bxs-envelope'></i></a>
-                                        <span>quentin.roger@example.com</span>
-                                    </div>
-                                    <div>
-                                        <a href=""><i class='bx bxs-phone-call'></i></a>
-                                        <span>04-78-23-87-90</span>
-                                    </div>
-                                    <div>
-                                        <a href=""><i class='bx bxs-cake'></i></a>
-                                        <span>Anniversaire : 11 Décembre</span>
-                                    </div>
-                                </div>
+                @if($randomUser)
+                <div class="img">
+                    @if($randomUser->photo)
+                        <img src="{{ asset('storage/img/' . $randomUser->photo) }}" alt="Photo de {{ $randomUser->name }}" class="img-pers">
+                    @else
+                        <img src="{{ asset('storage/img/default.jpg') }}" alt="Photo de profil par défaut" class="img-pers">
+                    @endif
+                </div>
+                <div class="fonction">
+                    <span>{{ $randomUser->categorie }}</span>
+                </div>
+                <div class="items">
+                    <div class="p">
+                        <p>{{ $randomUser->surname }} {{ $randomUser->name }}</p>
+                        <p>{{ $randomUser->city }}, {{ $randomUser->country }}</p>
+                    </div>
+                    <div class="social-icons">
+                        <div>
+                            <a href="mailto:{{ $randomUser->email }}"><i class='bx bxs-envelope'></i></a>
+                            <span>{{ $randomUser->email }}</span>
                         </div>
-                        </section>
-                        <button class="button">Dire bonjour</button>
-                        <button class="button">Dire bonjour a quelqu’un d’autre</button>
+                        <div>
+                            <a href="tel:{{ $randomUser->phone }}"><i class='bx bxs-phone-call'></i></a>
+                            <span>{{ $randomUser->phone }}</span>
+                        </div>
+                        <div>
+                            <a href="#"><i class='bx bxs-cake'></i></a> 
+                            <span>Anniversaire : {{ \Carbon\Carbon::parse($randomUser->birthdate)->format('d F') }}</span>
+                        </div>
+                    </div>
+                </div>
+                @else
+                    <p>Aucun utilisateur trouvé.</p>
+                @endif
+            </section>
+            <a href="{{ route('accueil') }}">
+                <button type="submit" class="button">Dire bonjour à quelqu’un d’autre</button>
+            </a>
         </section>
                     </main>
                     <footer class="footer">

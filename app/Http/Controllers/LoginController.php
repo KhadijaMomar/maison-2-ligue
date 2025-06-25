@@ -45,30 +45,30 @@ class LoginController extends Controller
         ])->withInput($request->only('email'));
     }
 
-    public function accueil()
-    {
-        if (!Auth::guard('utilisateur')->check()) {
-            return redirect('/login')->withErrors(['error' => 'Veuillez vous connecter.']);
+  /**
+     * Gère l'affichage de la page d'accueil avec un utilisateur aléatoire.
+     *
+     * @return \Illuminate\View\View
+     */
+      public function accueil()
+        {
+            $authenticatedUserId = null;
+            if (Auth::guard('utilisateur')->check()) {
+                $authenticatedUserId = Auth::guard('utilisateur')->id();
+            }
+
+            $query = Utilisateur::query();
+
+            // Exclure l'utilisateur connecté si l'ID est disponible
+            if ($authenticatedUserId) {
+                $query->where('id', '!=', $authenticatedUserId);
+            }
+
+            $randomUser = $query->inRandomOrder()->first();
+
+            return view('accueil', ['randomUser' => $randomUser]);
         }
 
-        // 1. Essayer de trouver un utilisateur aléatoire qui n'est PAS admin.
-        $collaborateur = Utilisateur::where('est_admin', 0)
-            ->inRandomOrder() // Sélectionne un enregistrement au hasard
-            ->first();
-
-        // 2. Si aucun non-admin n'est trouvé (par exemple, seulement des admins existent ou DB vide)
-        if (!$collaborateur) {
-            // Tente de trouver n'importe quel utilisateur aléatoire, y compris les admins,
-            // au cas où il n'y aurait aucun collaborateur non-admin dans la BD.
-            $collaborateur = Utilisateur::inRandomOrder()->first();
-        }
-
-        // 3. Passe le collaborateur (ou null si la DB est complètement vide) et le titre à la vue.
-        return view('accueil', [
-            'collaborateur' => $collaborateur, // Peut être null si la table 'utilisateur' est vide
-            'titre' => 'Bienvenue sur l\'intranet'
-        ]); // **********************************************************
-    }
 
     # Page après connexion
     public function dashboard()

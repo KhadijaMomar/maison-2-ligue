@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\utilisateur; 
+use Illuminate\Support\Facades\Auth;
 
 class SearchUtilisateurs extends Component
 {
@@ -23,6 +24,11 @@ class SearchUtilisateurs extends Component
     public function render()
     {
         $query = Utilisateur::query();
+
+        // Exclure l'utilisateur actuellement connecté de la liste
+        if (Auth::guard('utilisateur')->check()) {
+            $query->where('id', '!=', Auth::guard('utilisateur')->id());
+        }
 
         // Appliquer le filtre par terme de recherche général
         if (!empty($this->search)) {
