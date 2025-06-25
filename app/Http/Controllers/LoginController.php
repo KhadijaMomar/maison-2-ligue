@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Admin;
-use App\Models\Collaborateur;
 use App\Models\utilisateur;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -13,17 +11,32 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 
 class LoginController extends Controller
+
 {
-    // Affiche le formulaire de connexion
+     /**
+     * Affiche le formulaire de connexion.
+     *
+     * @return \Illuminate\View\View
+     */
     public function showLogin()
     {
         return view('auth.login', ['titre' => 'Connexion']);
     }
+    /**
+     * Affiche le formulaire de création d'un nouvel utilisateur.
+     *
+     * @return \Illuminate\View\View
+     */
      public function creer()
     {
         return view('creer'); // Retourne la vue 'creer'
     }
-
+     /**
+     * Gère la soumission du formulaire de connexion.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function handleLogin(Request $request)
     {
         $credentials = $request->validate([
@@ -70,7 +83,11 @@ class LoginController extends Controller
         }
 
 
-    # Page après connexion
+       /**
+     * Affiche le tableau de bord pour un utilisateur non administrateur.
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
     public function dashboard()
     {
         if (!Auth::guard('utilisateur')->check() || Auth::guard('utilisateur')->user()->est_admin == 1) {
@@ -79,7 +96,11 @@ class LoginController extends Controller
         $utilisateurs = Utilisateur::all();
         return view('dashboard', compact('utilisateurs'));
     }
-
+       /**
+     * Affiche le tableau de bord pour l'administrateur.
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
     public function dashboardAdmin()
     {
         // Vérifie si l'utilisateur est bien connecté via le guard 'utilisateur'
@@ -92,9 +113,11 @@ class LoginController extends Controller
     }
     
    
-    /**
+       /**
      * Affiche le formulaire de modification d'un utilisateur.
+     *
      * @param int|null $id L'ID de l'utilisateur à modifier (null si c'est l'utilisateur connecté).
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function modifier($id = null)
     {
@@ -126,10 +149,12 @@ class LoginController extends Controller
         ]);
     }
 
-     /**
+   /**
      * Gère la soumission du formulaire de mise à jour d'un utilisateur.
+     *
      * @param Request $request
      * @param int|null $id L'ID de l'utilisateur à modifier (null si c'est l'utilisateur connecté).
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, $id = null)
     {
@@ -242,7 +267,12 @@ class LoginController extends Controller
         // Rediriger l'utilisateur vers la page appropriée avec un message de succès
         return redirect()->route($redirectRoute)->with('success', 'Profil mis à jour avec succès.');
     }
-
+    /**
+     * Supprime un utilisateur et sa photo associée.
+     *
+     * @param int $id L'ID de l'utilisateur à supprimer.
+     * @return \Illuminate\Http\RedirectResponse
+     */
      public function destroy($id)
     {
         $collab = Utilisateur::findOrFail($id);
@@ -253,16 +283,13 @@ class LoginController extends Controller
         $collab->delete();
         return redirect()->route('dashboardAdmin')->with('success', 'Utilisateur supprimé avec succès !');
     }
-    public function sayHello(Request $request, $id)
-    {
-        $collaborateur = Utilisateur::findOrFail($id);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Vous avez dit bonjour à ' . $collaborateur->name . ' ' . $collaborateur->surname . ' !'
-        ]);
-    }
-    
+       /**
+     * Gère la création d'un nouvel utilisateur.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
         $data = $request->validate([
