@@ -16,6 +16,8 @@ Route::controller(LoginController::class)->group(function () {
     Route::post('/logout','logout')->name('logout');
     Route::get('/utilisateur/modifier/{id}', 'modifier')->name('modifier');
     Route::put('/utilisateur/{id}', 'update')->name('update');
+    Route::get('/profil/modifier', 'modifier')->name('modifierProfil'); // Appel de la méthode 'modifier' sans ID
+    Route::put('/profil/update', 'update')->name('updateProfil');       // Appel de la méthode 'update' sans ID
     Route::delete('/utilisateur/{id}', 'destroy')->name('destroy');
     Route::get('/utilisateur/creer', 'creer')->name('creerUtilisateur'); // Nouvelle route pour la création
     Route::post('/utilisateur/store', 'store')->name('storeUtilisateur'); // Route pour soumettre le formulaire de création

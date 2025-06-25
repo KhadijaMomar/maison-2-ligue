@@ -6,7 +6,9 @@ Variables requises:
 - $isEdit: Booléen indiquant si c'est un formulaire de modification (true) ou de création (false).
 - $utilisateur (optionnel): L'objet utilisateur si $isEdit est true.
 --}}
-
+@php
+    $isSelfEdit = $isSelfEdit ?? false; // Initialise si non défini, important !
+@endphp
 <section class="form-search">
     @if ($errors->any())
         <div class="alert alert-danger">
@@ -21,7 +23,7 @@ Variables requises:
     <form action="{{ $actionRoute }}" method="POST" enctype="multipart/form-data" class="form-add-edit">
         @csrf
         @if ($isEdit)
-            @method($method) {{-- Utilise PUT ou PATCH pour la modification --}}
+            @method($method) {{-- Utilise PUT pour la modification --}}
         @endif
 
         <div>
@@ -82,10 +84,14 @@ Variables requises:
                 <p>Photo actuelle: <img src="{{ asset('storage/img/' . $utilisateur->photo) }}" alt="Photo actuelle" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;"></p>
             @endif
         </div>
-        <div>
-            <label for="est_admin">Est administrateur: </label>
-            <input type="checkbox" name="est_admin" value="1" {{ old('est_admin', $isEdit && $utilisateur->est_admin) ? 'checked' : '' }}>
-        </div>
+             @if (!$isSelfEdit)
+            <div>
+                <label for="est_admin">Est administrateur: </label>
+                <input type="checkbox" name="est_admin" value="1" {{ old('est_admin', $isEdit && $utilisateur->est_admin) ? 'checked' : '' }}>
+            </div>
+        @else
+            {{-- <p>Votre statut d'administrateur ne peut pas être modifié ici.</p> --}}
+        @endif
         <button type="submit" class="button">{{ $isEdit ? 'Modifier le collaborateur' : 'Ajouter le collaborateur' }}</button>
     </form>
 </section>

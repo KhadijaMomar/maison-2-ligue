@@ -59,8 +59,10 @@
                            
                             @if(Auth::guard('utilisateur')->check())
 
-                            <img src="{{ asset('storage/img/' . Auth::guard('utilisateur')->user()->photo) }}" alt="Photo de profil">
-                             <span>{{ Auth::guard('utilisateur')->user()->name }}</span>
+                           <a href="{{ route('modifierProfil') }}" style="display: flex; align-items: center; gap: 5px; text-decoration: none; color: inherit;">
+                                <img src="{{ asset('storage/img/' . Auth::guard('utilisateur')->user()->photo) }}" alt="Photo de profil" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                                <span>{{ Auth::guard('utilisateur')->user()->name }}</span>
+                            </a>
                             @else
                             <span>Non connecté</span>
                             @endif
@@ -75,74 +77,20 @@
                     </header>
     <main>
         <section class="title">
-             <h1>Modifier un membre</h1>
+              {{-- Le titre change en fonction du mode d'édition --}}
+            <h1>{{ $isSelfEdit ? 'Modifier mon profil' : 'Modifier le collaborateur: ' . $utilisateur->name . ' ' . $utilisateur->surname }}</h1>
         </section>
         <section class="bars">
         </section>
-    @if ($errors->any())
-        <div style="color: red;">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-      <section class="form-search">
-            <form action="{{ route('update', $utilisateur->id) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-
-                <div>
-                    <label for="civilite">*Civilité: </label>
-                    <input type="text" name="civilite" value="{{ $utilisateur->civilite }}" placeholder="Homme">
-                </div>
-                <div>
-                    <label for="categorie">*Categorie: </label>
-                    <input type="text" name="categorie" value="{{ $utilisateur->categorie }}" placeholder="Client">
-                </div>
-                <div>
-                    <label for="surname">*Nom: </label>
-                    <input type="text" name="surname" value="{{ $utilisateur->surname }}" placeholder="Doe">
-                </div>
-                <div>
-                    <label for="name">*Prenom: </label>
-                    <input type="text" name="name" value="{{ $utilisateur->name }}" placeholder="John">
-                </div>
-                <div>
-                    <label for="mail">*Email: </label>
-                    <input type="mail" name="email" value="{{ $utilisateur->email }}" placeholder="example@gmail.com">
-                </div>
-                <div>
-                    <label for="birth">*Date de naissance: </label>
-                    <input type="date" name="birthdate" value="{{ $utilisateur->birthdate }}">
-                </div>
-                <div>
-                    <label for="password">*Mot de passe: </label>
-                    <input type="text" name="password" placeholder="min 8 caractères">
-                </div>
-                <div>
-                    <label for="password">*Confirmation: </label>
-                    <input type="text" name="password_confirmation" placeholder="min 8 caractères">
-                </div>
-                <div>
-                    <label for="tel">*Telephone: </label>
-                    <input type="text" name="phone" value="{{ $utilisateur->phone }}" placeholder="07 65 48 09 75">
-                </div>
-                <div>
-                    <label for="pays">*Pays: </label>
-                    <input type="text" name="country" value="{{ $utilisateur->country }}" placeholder="France">
-                </div>
-               <div>
-                    <label for="photo">*Url de la photo: </label>
-                    <input type="file" name="photo" id="photo"  accept="image/*" >
-                    @if($utilisateur->photo)
-                        <p>Photo actuelle: <img src="{{ asset('storage/img/' . $utilisateur->photo) }}" alt="Photo actuelle" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;"></p>
-                    @endif
-                </div>
-                <button type="submit" class="button">Modifier le collaborateur</button>
-            </form>
-        </section>
+  {{-- Inclusion du partiel du formulaire --}}
+        @include('partial.form_utilisateur', [
+            // La route d'action dépend si c'est une auto-modification ou une modification par admin
+            'actionRoute' => $isSelfEdit ? route('updateProfil') : route('update', $utilisateur->id),
+            'method' => 'PUT',
+            'isEdit' => true,
+            'utilisateur' => $utilisateur,
+            'isSelfEdit' => $isSelfEdit, // Passe le flag au partiel
+        ])
     </main>
     <footer class="footer">
         <p>© - khadidiatou - 2025 <img src="https://img.shields.io/badge/Intranet-Active-brightgreen" alt="badge"></p>

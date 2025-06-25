@@ -91,74 +91,119 @@ class LoginController extends Controller
         return view('dashboardAdmin', compact('utilisateurs'));
     }
     
-    
+   
     /**
-     * Gère la déconnexion de l'utilisateur.
-     *
-     * Cette fonction termine la session de l'utilisateur et le redirige vers la page de connexion
-     * avec un message de succès.
-     *
-     * @return \Illuminate\Http\RedirectResponse
+     * Affiche le formulaire de modification d'un utilisateur.
+     * @param int|null $id L'ID de l'utilisateur à modifier (null si c'est l'utilisateur connecté).
      */
-    public function logout()
+    public function modifier($id = null)
     {
-        Session::flush();
-        return redirect('/login')->with('success', 'Déconnexion réussie.');
+        $isSelfEdit = false;
+        $utilisateur = null;
+
+        if ($id === null) {
+            // L'utilisateur essaie de modifier son propre profil
+            $utilisateur = Auth::guard('utilisateur')->user();
+            if (!$utilisateur) {
+                // Cette situation ne devrait pas se produire si le middleware 'auth.utilisateur' est actif
+                return redirect()->route('login')->withErrors(['error' => 'Veuillez vous connecter pour modifier votre profil.']);
+            }
+            $isSelfEdit = true;
+        } else {
+            // Un administrateur modifie un autre utilisateur
+            // S'assurer que seul un admin peut faire cela
+            if (!Auth::guard('utilisateur')->check() || !Auth::guard('utilisateur')->user()->est_admin) {
+                return redirect()->route('accueil')->withErrors(['error' => 'Accès non autorisé.']);
+            }
+            $utilisateur = Utilisateur::findOrFail($id);
+        }
+
+        // Renvoie la même vue 'modifier'
+        return view('modifier', [
+            'utilisateur' => $utilisateur,
+            'isSelfEdit' => $isSelfEdit, // Passe un flag à la vue
+            'isEdit' => true // Indique que c'est un formulaire d'édition
+        ]);
     }
 
-    /**
-     * Affiche le formulaire d'édition d'un collaborateur.
-     *
-     * @param int $id L'ID du collaborateur à modifier.
-     * @return \Illuminate\View\View
+     /**
+     * Gère la soumission du formulaire de mise à jour d'un utilisateur.
+     * @param Request $request
+     * @param int|null $id L'ID de l'utilisateur à modifier (null si c'est l'utilisateur connecté).
      */
-    public function modifier($id)
+    public function update(Request $request, $id = null)
     {
-        $utilisateur = Utilisateur::findOrFail($id);
-        return view('modifier', compact('utilisateur'));
-    }
+        $isSelfEdit = false;
+        $utilisateur = null;
+        $loggedInUser = Auth::guard('utilisateur')->user(); // Récupère l'utilisateur actuellement connecté
 
-    // Met à jour le collaborateur en base de données
-   public function update(Request $request, $id)
-    {
-        $utilisateur = Utilisateur::findOrFail($id);
+        // Vérifiez si l'utilisateur est connecté. Si non, redirigez-le vers la page de connexion.
+        if (!$loggedInUser) {
+            return redirect()->route('login')->withErrors(['error' => 'Session expirée. Veuillez vous reconnecter.']);
+        }
 
+        // Détermine si c'est une auto-modification de profil ou la modification d'un autre utilisateur par un admin
+        if ($id === null) {
+            // C'est une auto-modification (l'utilisateur modifie son propre profil)
+            $utilisateur = $loggedInUser;
+            $isSelfEdit = true;
+
+            // Définir la route de redirection en fonction du statut 'est_admin' de l'utilisateur connecté
+            $redirectRoute = $loggedInUser->est_admin ? 'dashboardAdmin' : 'dashboard';
+        } else {
+            // Un administrateur modifie un autre utilisateur (via un ID)
+            // Assurez-vous que seul un administrateur peut effectuer cette action
+            if (!$loggedInUser->est_admin) {
+                return redirect()->route('accueil')->withErrors(['error' => 'Accès non autorisé.']);
+            }
+            $utilisateur = Utilisateur::findOrFail($id);
+            // Lorsqu'un administrateur modifie un autre utilisateur, il doit toujours être redirigé vers dashboardAdmin
+            $redirectRoute = 'dashboardAdmin';
+        }
+
+        // Règles de validation pour les données du formulaire
         $rules = [
             'surname' => 'required|string|max:255',
             'name' => 'required|string|max:255',
             'email' => [
                 'required',
                 'email',
-                // L'email doit être unique SAUF pour l'utilisateur actuel
+                // L'email doit être unique SAUF pour l'utilisateur actuellement modifié
                 Rule::unique('utilisateur', 'email')->ignore($utilisateur->id),
             ],
-            'city' => 'nullable|string|max:255',
-            'country' => 'nullable|string|max:255',
-            'birthdate' => 'nullable|date',
             'phone' => 'nullable|string|max:15',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:32768',
-            'est_admin' => 'nullable|boolean',
+            'country' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'birthdate' => 'nullable|date',
             'civilite' => 'nullable|string|max:255',
             'categorie' => 'nullable|string|max:255',
-            'est_admin' => 'nullable|boolean',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Max 2MB
         ];
 
-        // Rendre les champs de mot de passe conditionnellement requis
-        // S'ils sont fournis, ils doivent être au moins de 6 caractères et confirmés
+        // Le mot de passe est optionnel en modification.
+        // Si les champs password ou password_confirmation sont remplis, ils deviennent requis et doivent correspondre.
         if ($request->filled('password') || $request->filled('password_confirmation')) {
             $rules['password'] = 'required|string|min:6|confirmed';
         } else {
-            // Si aucun mot de passe n'est fourni, assurez-vous qu'ils ne soient pas validés comme "required"
-            $rules['password'] = 'nullable|string|min:6|confirmed';
+            // Si les champs de mot de passe sont laissés vides, ils ne sont pas requis.
+            // La règle 'nullable|string|min:6|confirmed' gère bien ça, mais on peut être plus explicite si besoin.
+            // Pour éviter une erreur si 'password' n'est pas rempli et n'est pas "nullable" on ajoute 'nullable' si ce n'est pas déjà fait.
+            // Cependant, la ligne 'nullable|string|min:6|confirmed' dans la validation gère déjà ce cas.
         }
 
 
+        // Le champ 'est_admin' ne peut être modifié que par un administrateur et seulement pour les AUTRES utilisateurs.
+        if (!$isSelfEdit) {
+            $rules['est_admin'] = 'nullable|boolean';
+        }
+
+        // Valider les données de la requête
         $data = $request->validate($rules);
 
-        // Gérer l'upload de la photo
+        // --- Traitement de la photo de profil ---
         if ($request->hasFile('photo')) {
-            // Supprimer l'ancienne photo si elle existe
-            if ($utilisateur->photo && file_exists(public_path('storage/img/' . $utilisateur->photo))) {
+            // Supprimer l'ancienne photo si elle existe et n'est pas la photo par défaut
+            if ($utilisateur->photo && file_exists(public_path('storage/img/' . $utilisateur->photo)) && $utilisateur->photo !== 'default.jpg') {
                 unlink(public_path('storage/img/' . $utilisateur->photo));
             }
             $file = $request->file('photo');
@@ -166,28 +211,36 @@ class LoginController extends Controller
             $file->move(public_path('storage/img'), $filename);
             $data['photo'] = $filename;
         } else {
-            // Si aucune nouvelle photo n'est uploadée, garder l'ancienne
-            // Et ne pas unset la clé, si vous voulez conserver la valeur existante
-            // C'est déjà géré par la validation si photo est nullable
+            // Si aucune nouvelle photo n'est uploadée, assurez-vous de ne pas écraser l'ancienne photo par null
+            // si le champ photo était présent dans la validation mais non rempli.
+            if (array_key_exists('photo', $data)) {
+                unset($data['photo']);
+            }
         }
 
-        // Si un nouveau mot de passe est fourni, le hasher
+        // --- Traitement du mot de passe ---
         if (!empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         } else {
-            // Si le mot de passe est vide, retirez-le des données à mettre à jour pour ne pas écraser l'existant
+            // Si le mot de passe est vide, retirez-le des données à mettre à jour
             unset($data['password']);
         }
 
-        
-        // Si la checkbox n'est pas cochée, elle ne sera pas présente dans $request->all().
-        // Donc, on la définit explicitement à false si elle n'est pas présente.
-        $data['est_admin'] = $request->has('est_admin');
+        // --- Gestion du statut administrateur ---
+        // Empêcher un utilisateur de modifier son propre statut d'administrateur
+        if ($isSelfEdit) {
+            unset($data['est_admin']); // Retire le champ 'est_admin' des données à mettre à jour
+        } else {
+            // Si ce n'est pas une auto-modification (donc un admin modifie un autre utilisateur),
+            // traitez la valeur de la checkbox 'est_admin'.
+            $data['est_admin'] = $request->has('est_admin'); // true si cochée, false sinon
+        }
 
+        // Mettre à jour l'utilisateur dans la base de données
         $utilisateur->update($data);
 
-        return redirect()->route('dashboardAdmin')
-            ->with('success', 'Collaborateur mis à jour avec succès.');
+        // Rediriger l'utilisateur vers la page appropriée avec un message de succès
+        return redirect()->route($redirectRoute)->with('success', 'Profil mis à jour avec succès.');
     }
 
      public function destroy($id)
@@ -247,5 +300,19 @@ class LoginController extends Controller
         Utilisateur::create($data);
 
         return redirect()->route('dashboardAdmin')->with('success', 'Utilisateur ajouté avec succès !');
+    }
+     
+    /**
+     * Gère la déconnexion de l'utilisateur.
+     *
+     * Cette fonction termine la session de l'utilisateur et le redirige vers la page de connexion
+     * avec un message de succès.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function logout()
+    {
+        Session::flush();
+        return redirect('/login')->with('success', 'Déconnexion réussie.');
     }
 }

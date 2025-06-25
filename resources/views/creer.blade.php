@@ -39,9 +39,10 @@
                             @endif
                            
                             @if(Auth::guard('utilisateur')->check())
-
-                            <img src="{{ asset('storage/img/' . Auth::guard('utilisateur')->user()->photo) }}" alt="Photo de profil">
-                             <span>{{ Auth::guard('utilisateur')->user()->name }}</span>
+                        <a href="{{ route('modifierProfil') }}" style="display: flex; align-items: center; gap: 5px; text-decoration: none; color: inherit;">
+                            <img src="{{ asset('storage/img/' . Auth::guard('utilisateur')->user()->photo) }}" alt="Photo de profil" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                            <span>{{ Auth::guard('utilisateur')->user()->name }}</span>
+                        </a>
                             @else
                             <span>Non connecté</span>
                             @endif
